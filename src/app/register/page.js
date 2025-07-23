@@ -39,12 +39,6 @@ export default function Register() {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
-      setLoading(false);
-      return;
-    }
-
     if (formData.password !== formData.confirmPassword) {
       setError('Las contraseñas no coinciden');
       setLoading(false);
@@ -52,25 +46,33 @@ export default function Register() {
     }
 
     try {
-      // Simulación de registro (aquí puedes integrar con tu API)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Guardar datos de usuario en localStorage
-      const userData = {
-        name: formData.name,
+      const payload = {
+        username: formData.name,
         email: formData.email,
-        isAuthenticated: true
+        password: formData.password
       };
-      localStorage.setItem('user', JSON.stringify(userData));
+
+      await saveUserData(payload);
       
-      // Redirigir a la tienda
-      router.push('/tienda');
+      // Redirigir al login
+      router.push('/');
     } catch (err) {
       setError('Error al crear la cuenta');
     } finally {
       setLoading(false);
     }
   };
+
+  const saveUserData = async (data) => {
+    // llamamos al EP https://68805624f1dcae717b61a50d.mockapi.io/api/users y le pasamos username, email y password
+    const response = await fetch('https://68805624f1dcae717b61a50d.mockapi.io/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+  }
 
   return (
     <div style={{
@@ -142,14 +144,14 @@ export default function Register() {
               color: '#374151',
               marginBottom: '5px'
             }}>
-              Nombre Completo
+              Nombre de usuario
             </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Tu nombre completo"
+              placeholder="Tu nombre de usuario"
               style={{
                 width: '100%',
                 padding: '12px',
