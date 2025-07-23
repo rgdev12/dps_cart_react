@@ -2,7 +2,7 @@
 import { useState } from "react";
 import React from "react";
 
-export const Header = ({ allProducts, setAllProducts, total, countProducts, setCountProducts, setTotal }) => {
+export const Header = ({ allProducts, setAllProducts, total, countProducts, setCountProducts, setTotal, user, onLogout }) => {
   const [active, setActive] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -25,66 +25,108 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
       <div className="max-w-full sm:max-w-5xl mx-auto flex justify-between align-center p-5">
         <h1 className="font-bold text-2xl">Tienda de Libros</h1>
 
-        <div className="container-icon">
-          <div className="container-cart-icon" onClick={() => setActive(!active)}>
-            <img src="https://w7.pngwing.com/pngs/275/763/png-transparent-cart-shopping-supermarket-shopping-cart-ecommerce-e-commerce-shopping-trolley-caddy.png" alt="carrito" className="icon-cart" />
-            <div className="count-products">
-              <span id="contador-productos">{countProducts}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          {/* Información del usuario */}
+          {user && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '14px', 
+                  fontWeight: '500',
+                  color: '#374151'
+                }}>
+                  Bienvenido, {user.name}
+                </p>
+                <p style={{ 
+                  margin: 0, 
+                  fontSize: '12px', 
+                  color: '#6b7280'
+                }}>
+                  {user.email}
+                </p>
+              </div>
+              <button
+                onClick={onLogout}
+                style={{
+                  backgroundColor: '#dc2626',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 12px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  cursor: 'pointer',
+                  fontWeight: '500'
+                }}
+                onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
+                onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
+              >
+                Cerrar Sesión
+              </button>
             </div>
-          </div>
+          )}
 
-          <div className={`container-cart-products ${active ? '' : 'hidden-cart'}`}>
-            {allProducts.length ? (
-              <>
-                <div className="row-product">
-                  {allProducts.map(product => (
-                    <div className="cart-product" key={product.id}>
-                      <div className="info-cart-product">
-                        <span className="cantidad-producto-carrito">
-                          {product.quantity}
-                        </span>
-                        <p className="titulo-producto-carrito">{product.title}</p>
-                        <span className="precio-producto-carrito">
-                          ${product.price}
-                        </span>
+          <div className="container-icon">
+            <div className="container-cart-icon" onClick={() => setActive(!active)}>
+              <img src="https://w7.pngwing.com/pngs/275/763/png-transparent-cart-shopping-supermarket-shopping-cart-ecommerce-e-commerce-shopping-trolley-caddy.png" alt="carrito" className="icon-cart" />
+              <div className="count-products">
+                <span id="contador-productos">{countProducts}</span>
+              </div>
+            </div>
+
+            <div className={`container-cart-products ${active ? '' : 'hidden-cart'}`}>
+              {allProducts.length ? (
+                <>
+                  <div className="row-product">
+                    {allProducts.map(product => (
+                      <div className="cart-product" key={product.id}>
+                        <div className="info-cart-product">
+                          <span className="cantidad-producto-carrito">
+                            {product.quantity}
+                          </span>
+                          <p className="titulo-producto-carrito">{product.title}</p>
+                          <span className="precio-producto-carrito">
+                            ${product.price}
+                          </span>
+                        </div>
+                        <img src="https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png"
+                             alt="cerrar"
+                             className="icon-close"
+                             onClick={() => onDeleteProduct(product)}
+                        />
                       </div>
-                      <img src="https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png"
-                           alt="cerrar"
-                           className="icon-close"
-                           onClick={() => onDeleteProduct(product)}
-                      />
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-                <div className="cart-total">
-                  <h3>Total:</h3>
-                  <span className="total-pagar">${total}</span>
-                  <button 
-                    className="btn-detail-cart ml-2" 
-                    onClick={() => setShowModal(true)}
-                    style={{
-                      backgroundColor: '#2563eb',
-                      color: 'white',
-                      border: 'none',
-                      padding: '8px 12px',
-                      borderRadius: '4px',
-                      marginLeft: '10px',
-                      cursor: 'pointer',
-                      fontSize: '12px'
-                    }}
-                  >
-                    Ver Detalle
+                  <div className="cart-total">
+                    <h3>Total:</h3>
+                    <span className="total-pagar">${total}</span>
+                    <button 
+                      className="btn-detail-cart ml-2" 
+                      onClick={() => setShowModal(true)}
+                      style={{
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        border: 'none',
+                        padding: '8px 12px',
+                        borderRadius: '4px',
+                        marginLeft: '10px',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                      }}
+                    >
+                      Ver Detalle
+                    </button>
+                  </div>
+
+                  <button className="btn-clear-all" onClick={onCleanCart}>
+                    Vaciar Carrito
                   </button>
-                </div>
-
-                <button className="btn-clear-all" onClick={onCleanCart}>
-                  Vaciar Carrito
-                </button>
-              </>
-            ) : (
-              <p className="cart-empty">El carrito está vacío</p>
-            )}
+                </>
+              ) : (
+                <p className="cart-empty">El carrito está vacío</p>
+              )}
+            </div>
           </div>
         </div>
       </div>

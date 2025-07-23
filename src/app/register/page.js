@@ -3,39 +3,62 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Register() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
-    // Validaciones básicas
-    if (!email || !password) {
+    // Validaciones
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Por favor, completa todos los campos');
       setLoading(false);
       return;
     }
 
-    if (!email.includes('@')) {
+    if (!formData.email.includes('@')) {
       setError('Por favor, ingresa un email válido');
       setLoading(false);
       return;
     }
 
+    if (formData.password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      setLoading(false);
+      return;
+    }
+
     try {
-      // Simulación de login (aquí puedes integrar con tu API)
+      // Simulación de registro (aquí puedes integrar con tu API)
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Guardar datos de usuario en localStorage
       const userData = {
-        email: email,
-        name: email.split('@')[0], // Usar la parte antes del @ como nombre
+        name: formData.name,
+        email: formData.email,
         isAuthenticated: true
       };
       localStorage.setItem('user', JSON.stringify(userData));
@@ -43,7 +66,7 @@ export default function Login() {
       // Redirigir a la tienda
       router.push('/tienda');
     } catch (err) {
-      setError('Error al iniciar sesión');
+      setError('Error al crear la cuenta');
     } finally {
       setLoading(false);
     }
@@ -82,14 +105,14 @@ export default function Login() {
             marginBottom: '5px',
             color: '#374151'
           }}>
-            Iniciar Sesión
+            Crear Cuenta
           </h2>
           <p style={{ 
             fontSize: '14px', 
             color: '#6b7280',
             margin: 0
           }}>
-            Ingresa tus credenciales para acceder
+            Completa la información para registrarte
           </p>
         </div>
 
@@ -110,6 +133,38 @@ export default function Login() {
             </div>
           )}
 
+          {/* Name */}
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#374151',
+              marginBottom: '5px'
+            }}>
+              Nombre Completo
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Tu nombre completo"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                fontSize: '14px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+            />
+          </div>
+
           {/* Email */}
           <div style={{ marginBottom: '20px' }}>
             <label style={{
@@ -123,8 +178,9 @@ export default function Login() {
             </label>
             <input
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               placeholder="ejemplo@correo.com"
               style={{
                 width: '100%',
@@ -142,7 +198,7 @@ export default function Login() {
           </div>
 
           {/* Password */}
-          <div style={{ marginBottom: '25px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <label style={{
               display: 'block',
               fontSize: '14px',
@@ -154,8 +210,41 @@ export default function Login() {
             </label>
             <input
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '4px',
+                fontSize: '14px',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxSizing: 'border-box'
+              }}
+              onFocus={(e) => e.target.style.borderColor = '#2563eb'}
+              onBlur={(e) => e.target.style.borderColor = '#d1d5db'}
+            />
+          </div>
+
+          {/* Confirm Password */}
+          <div style={{ marginBottom: '25px' }}>
+            <label style={{
+              display: 'block',
+              fontSize: '14px',
+              fontWeight: '500',
+              color: '#374151',
+              marginBottom: '5px'
+            }}>
+              Confirmar Contraseña
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
               placeholder="••••••••"
               style={{
                 width: '100%',
@@ -178,7 +267,7 @@ export default function Login() {
             disabled={loading}
             style={{
               width: '100%',
-              backgroundColor: loading ? '#9ca3af' : '#2563eb',
+              backgroundColor: loading ? '#9ca3af' : '#059669',
               color: 'white',
               padding: '12px',
               border: 'none',
@@ -190,27 +279,27 @@ export default function Login() {
               marginBottom: '20px'
             }}
             onMouseOver={(e) => {
-              if (!loading) e.target.style.backgroundColor = '#1d4ed8';
+              if (!loading) e.target.style.backgroundColor = '#047857';
             }}
             onMouseOut={(e) => {
-              if (!loading) e.target.style.backgroundColor = '#2563eb';
+              if (!loading) e.target.style.backgroundColor = '#059669';
             }}
           >
-            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+            {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
           </button>
         </form>
 
-        {/* Switch to register */}
+        {/* Switch to login */}
         <div style={{ textAlign: 'center' }}>
           <p style={{ 
             fontSize: '14px', 
             color: '#6b7280',
             margin: '0 0 10px 0'
           }}>
-            ¿No tienes una cuenta?
+            ¿Ya tienes una cuenta?
           </p>
           <Link 
-            href="/register"
+            href="/"
             style={{
               color: '#2563eb',
               fontSize: '14px',
@@ -218,7 +307,7 @@ export default function Login() {
               textDecoration: 'underline'
             }}
           >
-            Crear cuenta nueva
+            Iniciar sesión
           </Link>
         </div>
       </div>
