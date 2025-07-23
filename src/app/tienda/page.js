@@ -14,7 +14,7 @@ export default function Tienda() {
 
   useEffect(() => {
     // Verificar si el usuario está autenticado
-    const userData = localStorage.getItem('user');
+    const userData = sessionStorage.getItem('user');
     if (userData) {
       const parsedUser = JSON.parse(userData);
       if (parsedUser.isAuthenticated) {
@@ -29,7 +29,7 @@ export default function Tienda() {
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     setUser(null);
     // Limpiar carrito al cerrar sesión
     setAllProducts([]);

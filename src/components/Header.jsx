@@ -22,7 +22,7 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
 
   return (
     <header>
-      <div className="max-w-full sm:max-w-5xl mx-auto flex justify-between align-center p-5">
+      <div className="max-w-full sm:max-w-5xl mx-auto flex justify-between items-center p-5">
         <h1 className="font-bold text-2xl">Tienda de Libros</h1>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -36,7 +36,7 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                   fontWeight: '500',
                   color: '#374151'
                 }}>
-                  Bienvenido, {user.name}
+                  Bienvenido, {user.username}
                 </p>
                 <p style={{ 
                   margin: 0, 
@@ -46,23 +46,6 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                   {user.email}
                 </p>
               </div>
-              <button
-                onClick={onLogout}
-                style={{
-                  backgroundColor: '#dc2626',
-                  color: 'white',
-                  border: 'none',
-                  padding: '8px 12px',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  cursor: 'pointer',
-                  fontWeight: '500'
-                }}
-                onMouseOver={(e) => e.target.style.backgroundColor = '#b91c1c'}
-                onMouseOut={(e) => e.target.style.backgroundColor = '#dc2626'}
-              >
-                Cerrar Sesión
-              </button>
             </div>
           )}
 
@@ -128,6 +111,27 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
               )}
             </div>
           </div>
+
+          <button
+            onClick={onLogout}
+            style={{
+              backgroundColor: 'gray',
+              color: 'white',
+              border: 'none',
+              padding: '8px 12px',
+              borderRadius: '4px',
+              fontSize: '12px',
+              cursor: 'pointer',
+              fontWeight: '500'
+            }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-logout">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+              <path d="M9 12h12l-3 -3" />
+              <path d="M18 15l3 -3" />
+            </svg>
+          </button>
         </div>
       </div>
 

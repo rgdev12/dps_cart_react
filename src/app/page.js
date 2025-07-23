@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -9,6 +9,17 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // Verificar si el usuario ya está autenticado
+    const userData = sessionStorage.getItem('user');
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      if (parsedUser.isAuthenticated) {
+        router.push('/tienda');
+      }
+    }
+  }, [router]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,25 +40,38 @@ export default function Login() {
     }
 
     try {
-      // Simulación de login (aquí puedes integrar con tu API)
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Guardar datos de usuario en localStorage
-      const userData = {
-        email: email,
-        name: email.split('@')[0], // Usar la parte antes del @ como nombre
-        isAuthenticated: true
-      };
-      localStorage.setItem('user', JSON.stringify(userData));
-      
-      // Redirigir a la tienda
-      router.push('/tienda');
+      await handleLogin({ email, password });
     } catch (err) {
       setError('Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
   };
+
+  const handleLogin = async (credentials) => {
+    // hacemos una consulta GET a mockapi de la siguiente forma: https://68805624f1dcae717b61a50d.mockapi.io/api/users?email=roman.montano@corre.com&password=admin123
+    const { email, password } = credentials;
+    
+    try {
+      const response = await fetch(`https://68805624f1dcae717b61a50d.mockapi.io/api/users?email=${email}&password=${password}`);
+      const data = await response.json();
+
+      if (data.length > 0) {
+        const userData = {
+          email: data[0].email,
+          username: data[0].username,
+          isAuthenticated: true
+        };
+
+        sessionStorage.setItem('user', JSON.stringify(userData));
+        router.push('/tienda');
+      } else {
+        setError('Credenciales incorrectas');
+      }
+    } catch (err) {
+      setError('Credenciales incorrectas');
+    }
+  }
 
   return (
     <div style={{
