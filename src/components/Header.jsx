@@ -5,13 +5,29 @@ import React from "react";
 export const Header = ({ allProducts, setAllProducts, total, countProducts, setCountProducts, setTotal, user, onLogout }) => {
   const [active, setActive] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [showModalDeleteProduct, setShowModalDeleteProduct] = useState(false);
+  const [productToDelete, setProductToDelete] = useState(null);
+  const [showModalCleanCart, setShowModalCleanCart] = useState(false);
 
-  const onDeleteProduct = product => {
-    const result = allProducts.filter(item => item.id !== product.id);
+  const onDeleteProduct = () => {
+    const result = allProducts.filter(item => item.id !== productToDelete.id);
 
-    setTotal(total - product.price * product.quantity);
-    setCountProducts(countProducts - product.quantity);
+    setTotal(total - productToDelete.price * productToDelete.quantity);
+    setCountProducts(countProducts - productToDelete.quantity);
     setAllProducts(result);
+
+    setProductToDelete(null);
+    setShowModalDeleteProduct(false);
+  }
+
+  const handleDeleteProduct = (product) => {
+    setProductToDelete(product);
+    setShowModalDeleteProduct(true);
+  }
+
+  const handleCleanCart = () => {
+    onCleanCart();
+    setShowModalCleanCart(false);
   }
 
   const onCleanCart = () => {
@@ -28,7 +44,7 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
     }}>
       <div className="max-w-full sm:max-w-5xl mx-auto flex justify-between items-center p-5">
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <span style={{ fontSize: '28px' }}>🏮</span>
+          <span style={{ fontSize: '28px' }}>🥡</span>
           <h1 className="font-bold text-2xl" style={{ 
             color: '#fbbf24',
             textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
@@ -36,7 +52,6 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
           }}>
             China Express
           </h1>
-          <span style={{ fontSize: '28px' }}>🥡</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
@@ -178,7 +193,7 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                                alignItems: 'center',
                                justifyContent: 'center'
                              }}
-                             onClick={() => onDeleteProduct(product)}
+                             onClick={() => handleDeleteProduct(product)}
                              onMouseEnter={(e) => e.target.style.background = '#fee2e2'}
                              onMouseLeave={(e) => e.target.style.background = 'none'}
                         >
@@ -202,7 +217,7 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                         fontSize: '16px',
                         fontFamily: '"Trebuchet MS", sans-serif'
                       }}>
-                        💰 Total:
+                        Total:
                       </h3>
                       <span className="total-pagar" style={{
                         fontSize: '18px',
@@ -223,16 +238,16 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                         cursor: 'pointer',
                         fontSize: '14px',
                         fontWeight: 'bold',
-                        width: '100%',
+                        width: '50%',
                         transition: 'all 0.3s',
                         fontFamily: '"Trebuchet MS", sans-serif'
                       }}
                     >
-                      📋 Ver Factura Detallada
+                      📋 Ver Factura
                     </button>
                   </div>
 
-                  <button className="btn-clear-all" onClick={onCleanCart} style={{
+                  <button className="btn-clear-all" onClick={() => setShowModalCleanCart(true)} style={{
                     backgroundColor: '#f59e0b',
                     color: '#7c2d12',
                     border: '2px solid #dc2626',
@@ -557,10 +572,6 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                   <span style={{ fontSize: '15px', fontWeight: '500' }}>📦 Total de artículos:</span>
                   <span style={{ fontSize: '15px', fontWeight: '600' }}>{countProducts}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '15px', fontWeight: '500' }}>🚚 Envío:</span>
-                  <span style={{ fontSize: '15px', fontWeight: '600', color: '#4ade80' }}>GRATIS</span>
-                </div>
                 <div style={{ 
                   display: 'flex', 
                   justifyContent: 'space-between', 
@@ -577,6 +588,157 @@ export const Header = ({ allProducts, setAllProducts, total, countProducts, setC
                   <span>${total.toFixed(2)}</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Detalle de Factura */}
+      {showModalDeleteProduct && (
+        <div 
+          className="modal-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowModal(false)}
+        >
+          <div 
+            className="modal-content"
+            style={{
+              background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%)',
+              padding: '30px',
+              borderRadius: '15px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 40px rgba(220, 38, 38, 0.3)',
+              border: '3px solid #dc2626'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>¿Estás seguro de que deseas eliminar este producto?</h3>
+            <div className="modal-actions">
+              <button style={{
+                backgroundColor: '#dc2626',
+                color: '#fbbf24',
+                border: '2px solid #fbbf24',
+                padding: '10px 15px',
+                borderRadius: '25px',
+                marginTop: '10px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                width: '50%',
+                transition: 'all 0.3s',
+                fontFamily: '"Trebuchet MS", sans-serif'
+              }}
+                onClick={() => onDeleteProduct()}
+              >
+                Eliminar
+              </button>
+            
+              <button style={{
+                backgroundColor: '#dc2626',
+                color: '#fbbf24',
+                border: '2px solid #fbbf24',
+                padding: '10px 15px',
+                borderRadius: '25px',
+                marginTop: '10px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                width: '50%',
+                transition: 'all 0.3s',
+                fontFamily: '"Trebuchet MS", sans-serif'
+              }}
+              onClick={() => setShowModalDeleteProduct(false)}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal para limpiar carrito */}
+      {showModalCleanCart && (
+        <div
+          className="modal-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000
+          }}
+          onClick={() => setShowModalCleanCart(false)}
+        >
+          <div
+            className="modal-content"
+            style={{
+              background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%)',
+              padding: '30px',
+              borderRadius: '15px',
+              maxWidth: '500px',
+              width: '90%',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              boxShadow: '0 20px 40px rgba(220, 38, 38, 0.3)',
+              border: '3px solid #dc2626'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>¿Estás seguro de que deseas limpiar el carrito?</h3>
+            <div className="modal-actions">
+              <button style={{
+                backgroundColor: '#dc2626',
+                color: '#fbbf24',
+                border: '2px solid #fbbf24',
+                padding: '10px 15px',
+                borderRadius: '25px',
+                marginTop: '10px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                width: '50%',
+                transition: 'all 0.3s',
+                fontFamily: '"Trebuchet MS", sans-serif'
+              }}
+                onClick={() => handleCleanCart()}
+              >
+                Limpiar
+              </button>
+
+              <button style={{
+                backgroundColor: '#dc2626',
+                color: '#fbbf24',
+                border: '2px solid #fbbf24',
+                padding: '10px 15px',
+                borderRadius: '25px',
+                marginTop: '10px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: 'bold',
+                width: '50%',
+                transition: 'all 0.3s',
+                fontFamily: '"Trebuchet MS", sans-serif'
+              }}
+                onClick={() => setShowModalCleanCart(false)}
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </div>

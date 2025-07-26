@@ -9,7 +9,7 @@ export const ProductList = ({ allProducts, setAllProducts, countProducts, setCou
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://68805624f1dcae717b61a50d.mockapi.io/api/books');
+        const response = await fetch('https://68805624f1dcae717b61a50d.mockapi.io/api/restaurant');
         if (!response.ok) {
           throw new Error('Error al cargar los productos');
         }
@@ -59,8 +59,7 @@ export const ProductList = ({ allProducts, setAllProducts, countProducts, setCou
         }}>
           <div style={{ 
             fontSize: '48px', 
-            marginBottom: '20px',
-            animation: 'spin 2s linear infinite'
+            marginBottom: '20px'
           }}>🥡</div>
           <p style={{
             fontSize: '18px',
@@ -71,12 +70,6 @@ export const ProductList = ({ allProducts, setAllProducts, countProducts, setCou
           }}>
             Preparando el menú...
           </p>
-          <style jsx>{`
-            @keyframes spin {
-              from { transform: rotate(0deg); }
-              to { transform: rotate(360deg); }
-            }
-          `}</style>
         </div>
       )}
       

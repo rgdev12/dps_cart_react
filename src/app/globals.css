@@ -220,11 +220,6 @@ img {
   }
 }
 
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 /* Estilo para el carrito oculto */
 .hidden-cart {
   display: none;
