@@ -98,7 +98,7 @@ export default function Login() {
             marginBottom: '10px',
             color: '#1f2937'
           }}>
-            Tienda de Libros
+            China Express
           </h1>
           <h2 style={{ 
             fontSize: '20px', 
